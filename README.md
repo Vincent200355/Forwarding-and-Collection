@@ -9,7 +9,7 @@ These steps will give you an instruction on how to locally deploy the project. T
 
 This project uses [Python 3.9.7](https://www.python.org/downloads/release/python-397/)
 For the installation process make sure to activate `Add Python 3.X to PATH` 
-![alt text](http://url/to/img.png)
+![install python](https://docs.python.org/3/_images/win_installer.png)
 
 After installing python, make sure to verify that the correct version is installed. Using `py --version` should result in the following output `Python 3.9.7`
 
