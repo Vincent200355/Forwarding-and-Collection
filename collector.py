@@ -2,21 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import time
 import configparser
-
-def interval_converter(data):
-    """Combining all services and update the intervals
-
-    Args:
-        data (list): service list
-
-    Returns:
-        list: The recreated datalist
-    """
-
-    for i in range(len(data)-1,0,-1):
-        data[i][0] = data[i][0] - data[i-1][0]
-    return data
-
+import threading
 
 def api_request(data, auth):
     """Api-request for the given service
@@ -28,13 +14,16 @@ def api_request(data, auth):
     Return:
         jsonOb: jsonOb from Api-request
     """
-
     interval, service, url = data
-    time.sleep(interval)
+    while True:
+        
+        time.sleep(interval)
 
-    return requests.get(url,
-            auth = HTTPBasicAuth(auth[0], auth[1])).json()
+        json_data = service, requests.get(url,
+                auth = HTTPBasicAuth(auth[0], auth[1])).json()
 
+        #Validator aufruf fehlt
+        time.sleep(0)
 
 # -required data
 #   [time-interval in sec, servicename, urls
@@ -49,9 +38,7 @@ config.read('credentials.ini')
 auth = [config.get('CollectorApi', 'user'), config.get('CollectorApi', 'pass')]
 
 data.sort()
-m_data = interval_converter(data)
 
-while True:
-    for i in range(4):
-        jsonOb = api_request(tuple(m_data[i]), auth)
-        # Jsonparser fehlt hier
+for i in range(4):
+    threading.Timer( 0,api_request,[data[i],auth]).start()
+            
