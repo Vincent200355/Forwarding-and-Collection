@@ -3,9 +3,12 @@ from requests.auth import HTTPBasicAuth
 import time
 import configparser
 import threading
+import endpoints 
+from verifier import verifyAPIResponse
 
 def api_request(data, auth):
-    """Api-request for the given service
+    """1. Api-request for the given service
+       2. call verifier
 
     Args:
         data (list): single service
@@ -16,28 +19,25 @@ def api_request(data, auth):
     """
     interval, service, url = data
     while True:
-        
         time.sleep(interval)
 
-        json_data = service, requests.get(url,
-                auth = HTTPBasicAuth(auth[0], auth[1])).json()
+        json_data = requests.get(url,
+                auth = HTTPBasicAuth(auth[0], auth[1])).text
 
-        #Validator aufruf fehlt
+        verifyAPIResponse(endpoints.ENDPOINTS[service] , json_data)
         time.sleep(0)
 
 # -required data
 #   [time-interval in sec, servicename, urls
-data = [[ 10, 'IT', 'http://asm.fl.dlr.de:10001/it'],
-        [ 20, 'Radar', 'http://asm.fl.dlr.de:10001/radar'],
-        [ 30, 'Flightplans', 'http://asm.fl.dlr.de:10001/flightplans'],
-        [ 15, 'Terminal', 'http://asm.fl.dlr.de:10001/terminal']]
+data = [[ 10, 'it', 'http://asm.fl.dlr.de:10001/it'],
+        [ 20, 'radar', 'http://asm.fl.dlr.de:10001/radar'],
+        [ 30, 'flightplans', 'http://asm.fl.dlr.de:10001/flightplans'],
+        [ 15, 'terminal', 'http://asm.fl.dlr.de:10001/terminal']]
 
 # -username & password for Authentication
 config = configparser.RawConfigParser()
 config.read('credentials.ini')
 auth = [config.get('CollectorApi', 'user'), config.get('CollectorApi', 'pass')]
-
-data.sort()
 
 for i in range(4):
     threading.Timer( 0,api_request,[data[i],auth]).start()
