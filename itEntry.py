@@ -11,7 +11,7 @@ regExDict = {
 
 
 def validateEntry(jsonObj):
-    ''' Takes a deeper look into the fetched terminal object to validate its data.
+    ''' Takes a deeper look into the fetched it object to validate its data.
     Each field is validated through a regular expression.
     :param jsonObj:     the parsed and fetched JSON object
     :return validity:   true/false depending on validation result
