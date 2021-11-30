@@ -1,2 +1,4 @@
 env/
 test/
+src/credentials.py
+src/__pycache__
