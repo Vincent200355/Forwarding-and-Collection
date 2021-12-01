@@ -51,7 +51,7 @@ class Connection:
             - observer: String -- flightplan || radar || terminal || it || observer || error
     '''
     def table(_, observer):
-        if(observer.lower() == 'flightplan'):
+        if(observer.lower() == 'flightplans'):
             return 'FlightplanEntry'
         elif(observer.lower() == 'radar'):
             return 'RadarEntry'
