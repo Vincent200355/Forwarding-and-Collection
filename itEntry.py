@@ -23,7 +23,7 @@ def validateEntry(jsonObj):
         for item in regExDict:
             # tests if the pattern matches the given object field
             try:
-                if re.fullmatch(regExDict[item], str(jsonObj[item])):
+                if re.fullmatch(regExDict[item], str(entry[item])):
                     pass
                 else:
                     # field is invalid - will be added to list of invalid fields

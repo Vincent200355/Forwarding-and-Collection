@@ -29,16 +29,16 @@ def validateEntry(jsonObj):
     '''
 
     invalidFields = []
-
-    for item in regExDict:
-        # tests if the pattern matches the given object field
-        try:
-            if re.fullmatch(regExDict[item], str(jsonObj[item])):
-                pass
-            else:
-                # field is invalid - will be added to list of invalid fields
+    for entry in jsonObj:
+        for item in regExDict:
+            # tests if the pattern matches the given object field
+            try:
+                if re.fullmatch(regExDict[item], str(entry[item])):
+                    pass
+                else:
+                    # field is invalid - will be added to list of invalid fields
+                    invalidFields.append(item)
+            except KeyError:
                 invalidFields.append(item)
-        except KeyError:
-            invalidFields.append(item)
 
     return (len(invalidFields) == 0), invalidFields
