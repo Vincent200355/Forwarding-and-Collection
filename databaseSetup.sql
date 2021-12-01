@@ -4,7 +4,7 @@ BEGIN;
 CREATE TABLE `ObservationError`(
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	observer ENUM('FLIGHTPLAN', 'TERMINAL', 'RADAR', 'IT') NOT NULL,
-	observedAt timestamp NOT NULL,
+	observedAt bigint NOT NULL,
 	cause ENUM('ENDPOINT_UNAVAILABLE', 'ENDPOINT_UNRESPONSIVE', 'MALFORMED_RESPONSE', 'EXTRANEOUS_RESPONSE', 'INTERNAL_ERROR') NOT NULL,
 	parameter text DEFAULT NULL
 );
@@ -15,8 +15,8 @@ CREATE TABLE `ObservationError`(
 CREATE TABLE `ObservedEntry`(
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	observer ENUM('FLIGHTPLAN', 'TERMINAL', 'RADAR', 'IT') NOT NULL,
-	observedAt timestamp NOT NULL,
-	validUntil timestamp NOT NULL,
+	observedAt bigint NOT NULL,
+	validUntil bigint NOT NULL,
 	outdated boolean NOT NULL DEFAULT FALSE,
 	reported boolean NOT NULL DEFAULT FALSE,
 	UNIQUE(id, observer)
@@ -36,7 +36,7 @@ CREATE TABLE `FlightplanEntry`(
 	route text NOT NULL,
 	destination text NOT NULL,
 	eet int NOT NULL,
-	eta timestamp NOT NULL,
+	eta bigint NOT NULL,
 	status text NOT NULL,
 	registration text NOT NULL,
 	icao4444 text NOT NULL
@@ -53,7 +53,7 @@ CREATE TABLE `RadarEntry`(
 	id int NOT NULL PRIMARY KEY,
 	observer ENUM('FLIGHTPLAN', 'TERMINAL', 'RADAR', 'IT') GENERATED ALWAYS AS ('RADAR') STORED NOT NULL,
 	callsign text NOT NULL,
-	date timestamp NOT NULL,
+	date bigint NOT NULL,
 	latitude double NOT NULL,
 	altitude double NOT NULL
 );

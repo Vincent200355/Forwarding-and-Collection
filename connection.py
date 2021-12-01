@@ -14,7 +14,7 @@ class Connection:
     def __init__(self):
         try:
             self.connection = mysql.connector.connect(user=creds.MYSQL_USER, password=creds.MYSQL_PASSWORD, host=creds.MYSQL_HOST, database=creds.MYSQL_DATABASE, port=creds.MYSQL_PORT)
-            print("Successfully conneted to " + creds.MYSQL_DATABASE)
+            print("Successfully connected to " + creds.MYSQL_DATABASE)
         except Exception as err:
             print ("Oops! An exception has occured:", err)
             print ("Exception TYPE:", type(err))
@@ -48,20 +48,20 @@ class Connection:
         Get table name corresponding to observer-keyword
         
         Keyword arguments:
-            - observer: String -- FLIGHTPLAN || RADAR || TERMINAL || IT || OBSERVER || ERROR
+            - observer: String -- flightplan || radar || terminal || it || observer || error
     '''
     def table(_, observer):
-        if(observer == 'FLIGHTPLAN'):
+        if(observer.lower() == 'flightplans'):
             return 'FlightplanEntry'
-        elif(observer == 'RADAR'):
+        elif(observer.lower() == 'radar'):
             return 'RadarEntry'
-        elif(observer == 'TERMINAL'):
+        elif(observer.lower() == 'terminal'):
             return 'TerminalEntry'
-        elif(observer == 'IT'):
+        elif(observer.lower() == 'it'):
             return 'ITEntry'
-        elif(observer == 'OBSERVER'):
+        elif(observer.lower() == 'observer'):
             return 'ObservedEntry'
-        elif(observer == 'ERROR'):
+        elif(observer.lower() == 'error'):
             return 'ObservationError'
         else:
             print("Endpoint is not implemented.")
@@ -70,7 +70,7 @@ class Connection:
         Execute a SELECT query for observer with custom arguments.
         
         Keyword arguments:
-            - observer: String -- FLIGHTPLAN || RADAR || TERMINAL || IT || OBSERVER || ERROR
+            - observer: String -- flightplan || radar || terminal || it || observer || error
             - arguments: Dictionary -- dictionary with arguments for WHERE-Clause. {key1: value1, key2: value2} => WHERE key1 = value1 AND key2 = value2
         Return value:
             - Boolean || List -- True -> Found matching record || List -> list of id's with matching data
@@ -91,7 +91,7 @@ class Connection:
         Execute a INSERT query for observer with custom arguments.
         
         Keyword arguments:
-            - observer: String -- FLIGHTPLAN || RADAR || TERMINAL || IT || OBSERVER || ERROR
+            - observer: String -- flightplan || radar || terminal || it || observer || error
             - arguments: Dictionary -- dictionary with arguments for INSERT {key1: value1, key2: value2} => INSERT INTO OBSERVER (key1, key2) VALUES(value1, value2)
     '''
     def write(self, observer, arguments):
@@ -104,12 +104,12 @@ class Connection:
         Execute a UPDATE query in ObservationEntry.
         
         Keyword arguments:
-            - observer: String -- FLIGHTPLAN || RADAR || TERMINAL || IT || OBSERVER || ERROR
+            - observer: String -- flightplan || radar || terminal || it || observer || error
             - arguments: Dictionary -- dictionary with arguments for UPDATE {key1: value1, key2: value2} => SET key1 = value1, key2 = value2
             - id: Integer -- id of record that should be updated
     '''
     def update(self, observer, arguments, id):
-        query = 'UPDATE ' + self.table("OBSERVER") + ' SET ' + ', '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + " WHERE id = " + str(id) + " AND observer = '" + observer + "';"
+        query = 'UPDATE ' + self.table("observer") + ' SET ' + ', '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + " WHERE id = " + str(id) + " AND observer = '" + observer + "';"
         self.execute(query, arguments)
         self.connection.commit()
 
@@ -117,12 +117,12 @@ class Connection:
         Execute two INSERT queries: Create a ObservationEntry and add observer-record.
         
         Keyword arguments:
-            - observer: String -- FLIGHTPLAN || RADAR || TERMINAL || IT || OBSERVER || ERROR
-            - arguments: Dictionary -- dictionary with arguments for INSERT INTO FLIGHTPLAN/RADAR/TERMINAL/IT
+            - observer: String -- flightplan || radar || terminal || it || observer || error
+            - arguments: Dictionary -- dictionary with arguments for INSERT INTO flightplan/radar/terminal/it
             - observationEntry: Dictionary -- dictionary with arguments for INSERT INTO OBSERVER
     '''
     def writeRecord(self, observer, arguments, observationEntry):
-        cursor = self.write("OBSERVER", {**observationEntry, **{"observer": observer}})
+        cursor = self.write("observer", {**observationEntry, **{"observer": observer}})
         self.write(observer, {**arguments, **{"id": cursor.lastrowid}})
 
 
@@ -132,52 +132,52 @@ class Connection:
 ###    TEST
 ###
 
-    # Create database connection
-    database = Connection()
+# # Create database connection
+# database = Connection()
 
-    # data for Flightplan record
-    record = {
-        "callsign":"EWG8XZ",
-        "ssr":"A1411",
-        "rules":"IS",
-        "wvc":"M",
-        "equipment":"S/S",
-        "origin":"LFPG",
-        "aircraft": "A320",
-        "eobt":1638144000000,
-        "route":"N0431F370 DH632",
-        "destination":"EDDH",
-        "eet":7200000,
-        "eta":"1970-01-01 00:00:01",
-        "status":"closed",
-        "registration":"DAAA",
-        "icao4444":"FPL-EWG8XZ/A1411-IS-A320/M-S/S-LFPG0000-N0431F370 DH632-EDDH0200-REG/DAAAA"
-    }
+# # data for Flightplan record
+# record = {
+#     "callsign":"EWG8XZ",
+#     "ssr":"A1411",
+#     "rules":"IS",
+#     "wvc":"M",
+#     "equipment":"S/S",
+#     "origin":"LFPG",
+#     "aircraft": "A320",
+#     "eobt":1638144000000,
+#     "route":"N0431F370 DH632",
+#     "destination":"EDDH",
+#     "eet":7200000,
+#     "eta":1638371266444,
+#     "status":"closed",
+#     "registration":"DAAA",
+#     "icao4444":"FPL-EWG8XZ/A1411-IS-A320/M-S/S-LFPG0000-N0431F370 DH632-EDDH0200-REG/DAAAA"
+# }
 
-    # data for observer record
-    obRecord = {
-        "observedAt": "1970-01-01 00:00:01",
-        "validUntil": "1970-01-01 00:00:01",
-        "outdated": 0,
-        "reported": 0
-    }
+# # data for observer record
+# obRecord = {
+#     "observedAt": 1638371266444,
+#     "validUntil": 1638371266444,
+#     "outdated": 0,
+#     "reported": 0
+# }
 
-    # data for observer record
-    obRecordUpdate = {
-        "observedAt": "2020-01-01 00:00:01",
-        "validUntil": "1970-01-01 00:00:01",
-        "outdated": 1,
-        "reported": 0
-    }
+# # data for observer record
+# obRecordUpdate = {
+#     "observedAt": 1638371266444,
+#     "validUntil": 1638371266444,
+#     "outdated": 1,
+#     "reported": 0
+# }
 
-    # INSERT a record for observer FLIGHTPLAN
-    database.writeRecord("FLIGHTPLAN", record, obRecord)
+# # INSERT a record for observer FLIGHTPLAN
+# database.writeRecord("FLIGHTPLAN", record, obRecord)
 
-    # UPDATE ObservationEntry with observer = FLIGHTPLAN AND id = 13
-    database.update("FLIGHTPLAN", obRecordUpdate, 13)
+# # UPDATE ObservationEntry with observer = FLIGHTPLAN AND id = 13
+# database.update("FLIGHTPLAN", obRecordUpdate, 13)
 
-    # Search for record in FLIGHTPLAN table
-    print(database.read("FLIGHTPLAN", record))
+# # Search for record in FLIGHTPLAN table
+# print(database.read("FLIGHTPLAN", record))
 
-    # Close database connection
-    database.close()
+# # Close database connection
+# database.close()

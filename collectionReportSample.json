@@ -60,14 +60,20 @@
 		"kind": "error",
 		"observer": "radar",
 		"observedAt": 1609459200000,
-		"cause": "MALFORMED_RESPONSE",
-		"parameter": "[{\"text\":\"This is not a valid JSON structure, because there is no closing bracked for the following object\"}, {]"
+		"validUntil": 0,
+		"data": {
+			"cause": "MALFORMED_RESPONSE",
+			"parameter": "[{\"text\":\"This is not a valid JSON structure, because there is no closing bracked for the following object\"}, {]"
+		}
 	},
 	{
 		"kind": "error",
 		"observer": null,
 		"observedAt": 1609459200000,
-		"cause": "INTERNAL_ERROR",
-		"parameter": null
+		"validUntil": 0,
+		"data": {
+			"cause": "INTERNAL_ERROR",
+			"parameter": null
+		}
 	}
 ]
