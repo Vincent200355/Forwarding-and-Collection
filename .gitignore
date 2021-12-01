@@ -1,3 +1,6 @@
-'env' 
 /david/
+/env/
+/test/
 /credentials.ini
+/src/credentials.py
+/**/__pycache__
