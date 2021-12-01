@@ -16,8 +16,8 @@ regExDict = {
     "eet":          r"[0-9]+",
     "eta":          r"[0-9]+",
     "status":       r"[a-zA-Z]+",
-    "registration": r"[A-Z]+",
-    "icao4444":     r"[A-Z0-9/\- ]+"
+    "registration": r"[A-Z0-9]+",
+    "icao4444":     r"[A-Z0-9/\- \)\(]+"
 }
 
 
