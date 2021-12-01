@@ -7,34 +7,36 @@ import endpoints
 from verifier import verifyAPIResponse
 
 def api_request(data, auth):
-    """1. Api-request for the given service
-       2. call verifier
+    """The given data provides a time-interval, the service name and an URL for the given service.
+       Sending an API request and forward the response to the verifier.
 
     Args:
-        data (list): single service
+        data (list): data from the given service
         auth (list): authentication data
-    
-    Return:
-        jsonOb: jsonOb from Api-request
     """
+
     interval, service, url = data
     while True:
         time.sleep(interval)
 
-        json_data = requests.get(url,
+        response = requests.get(url,
                 auth = HTTPBasicAuth(auth[0], auth[1])).text
+        observedAt = int(round(time.time() * 1000))
 
-        verifyAPIResponse(endpoints.ENDPOINTS[service] , json_data)
+        verifyAPIResponse(endpoints.ENDPOINTS[service] , response, observedAt)
         time.sleep(0)
 
-# -required data
-#   [time-interval in sec, servicename, urls
+
+# service data
+#  --> FORMAT: [interval, service name, URL]
 data = [[ 10, 'it', 'http://asm.fl.dlr.de:10001/it'],
         [ 20, 'radar', 'http://asm.fl.dlr.de:10001/radar'],
         [ 30, 'flightplans', 'http://asm.fl.dlr.de:10001/flightplans'],
         [ 15, 'terminal', 'http://asm.fl.dlr.de:10001/terminal']]
 
-# -username & password for Authentication
+
+# authentication data
+#  --> FORMAT: [username, password]
 config = configparser.RawConfigParser()
 config.read('credentials.ini')
 auth = [config.get('CollectorApi', 'user'), config.get('CollectorApi', 'pass')]
