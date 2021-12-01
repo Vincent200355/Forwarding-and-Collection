@@ -22,10 +22,13 @@ def validateEntry(jsonObj):
         # nested for loops because of it entry structure (list)
         for item in regExDict:
             # tests if the pattern matches the given object field
-            if re.fullmatch(regExDict[item], str(jsonObj[item])):
-                pass
-            else:
-                # field is invalid - will be added to list of invalid fields
+            try:
+                if re.fullmatch(regExDict[item], str(jsonObj[item])):
+                    pass
+                else:
+                    # field is invalid - will be added to list of invalid fields
+                    invalidFields.append(item)
+            except KeyError:
                 invalidFields.append(item)
 
         # Integrity check of percentage values - needs to be between 0 and 100.
