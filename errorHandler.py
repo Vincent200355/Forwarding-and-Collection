@@ -1,8 +1,10 @@
-from datetime import datetime
+import time
+import connection as con
 from forwarder import pushErrorData as forwardError
 from observationFailureCause import INTERNAL_ERROR
+database = con.Connection()
 
-def handleError(observationFailureCause, parameter=None, endpoint=None, observedAt=datetime.now()):
+def handleError(observationFailureCause, parameter=None, endpoint=None, observedAt=round(time.time() * 1000)):
 	"""Handles an error by passing it to the forwarder and the database.
 	
 	The passed observationFailureCause must be defined by the
@@ -30,7 +32,8 @@ def handleError(observationFailureCause, parameter=None, endpoint=None, observed
 	"""
 	print("An error occurred: " + str(observationFailureCause) + "(" + str(parameter) + ") " + (("for endpoint " + endpoint.name()) if endpoint != None else "for an unknown endpoint") + " at " + str(observedAt))
 	try:
-		forwardError(endpoint, observedAt, observationFailureCause, parameter)
+		database.write("error", {"observer": endpoint.name(),"observedAt":observedAt,"cause":observationFailureCause,"parameter":parameter})
+		# forwardError(endpoint, observedAt, observationFailureCause, parameter)
 		# Any error must be passed to the database so it can be stored persistently
 	except Exception as e:
 		if observationFailureCause == INTERNAL_ERROR:
@@ -40,5 +43,4 @@ def handleError(observationFailureCause, parameter=None, endpoint=None, observed
 			print("This error will be ignored")
 		else:
 			print("An error occurred whilst handling an error: " + str(e))
-			handleError(INTERNAL_ERROR, observedAt=datetime.now())
-	
+			handleError(INTERNAL_ERROR, observedAt=round(time.time() * 1000))
