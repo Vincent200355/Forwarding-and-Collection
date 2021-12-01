@@ -93,7 +93,7 @@ TO 'fc'@'%';
 GRANT
 	SELECT,
 	INSERT,
-	UPDATE (`validUntil`)
+	UPDATE (`validUntil`, `reported`, `outdated`)
 ON TABLE `ObservedEntry`
 TO 'fc'@'%';
 
