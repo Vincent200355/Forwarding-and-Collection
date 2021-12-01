@@ -55,11 +55,13 @@ def _verifyStructure(endpoint, jsonObj, observedAt):
 		p = None
 		if incorrectKeys != None and len(incorrectKeys) > 0:
 			p = str(incorrectKeys)
-		print("Encountered an error whilst handling response of endpoint " + endpoint.name());
-		handleError(EXTRANEOUS_RESPONSE, parameter=p, observedAt=observedAt)
+		print("Encountered an error whilst handling response of endpoint " + endpoint.name() + ":");
+		print("Response was: " + str(jsonObj))
+		handleError(EXTRANEOUS_RESPONSE, parameter=p, endpoint=endpoint, observedAt=observedAt)
 		return
 	
 	print("Endpoint " + endpoint.name() + " delivered " + str(len(jsonObj)) + " " + ("entity" if len(jsonObj) == 1 else "entities"))
 	
 	unify(endpoint, observedAt, jsonObj)
+	# TODO pass to forwarder
 	

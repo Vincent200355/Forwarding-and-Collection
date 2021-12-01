@@ -1,6 +1,8 @@
-from datetime import datetime;
+from datetime import datetime
+from forwarder import pushErrorData as forwardError
+from observationFailureCause import INTERNAL_ERROR
 
-def handleError(observationFailureCause, parameter=None, observedAt=datetime.now()):
+def handleError(observationFailureCause, parameter=None, endpoint=None, observedAt=datetime.now()):
 	"""Handles an error by passing it to the forwarder and the database.
 	
 	The passed observationFailureCause must be defined by the
@@ -18,12 +20,25 @@ def handleError(observationFailureCause, parameter=None, observedAt=datetime.now
 		observationFailureCause - a observation failure cause as defined by the
 		observationFailureCause module
 		parameter - a string parameter for the error, e.g. the malformed JSON
+		endpoint - The endpoint which caused the error or None if the error is
+		not related to a specific endpoint or the endpoint the error is related
+		to cannot be detected
 		string that caused a observationFailureCause.MALFORMED_RESPONSE error,
 		or None if the error is not parametrized. (default: None)
 		observedAt - a datetime that indicates when the error occurred.
 		(default: datetime.now())
 	"""
-	# TODO implement
-	# Any error must be passed to the forwarder so it can be forwarded to the alerting component
-	# Any error must be passed to the database so it can be stored persistently
-	print("An error occurred: " + str(observationFailureCause) + "(" + str(parameter) + ") at " + str(observedAt))
+	print("An error occurred: " + str(observationFailureCause) + "(" + str(parameter) + ") " + (("for endpoint " + endpoint.name()) if endpoint != None else "for an unknown endpoint") " at " + str(observedAt))
+	try:
+		forwardError(endpoint, observedAt, observationFailureCause, parameter)
+		# Any error must be passed to the database so it can be stored persistently
+	except Exception as e:
+		if observationFailureCause == INTERNAL_ERROR:
+			# Failed to handle unexpected error. There is nothing that can be
+			# done
+			print("An error occurred whilst handling an unexpected error: " + str(e))
+			print("This error will be ignored")
+		else:
+			print("An error occurred whilst handling an error: " + str(e))
+			handleError(INTERNAL_ERROR, observedAt=datetime.now())
+	
