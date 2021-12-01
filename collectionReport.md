@@ -48,14 +48,16 @@ An event of type `error` always contains the following keys:
 - `kind`: Always `"error"`.
 - `observer`: The observer which caused the error. The value is one of `"flightplan"`, `"terminal"`, `"radar"`, `"it"` **or `null`**.
 - `observedAt`: The timestamp at which the error occurred. This may be the timestamp at which an invalid entry was observed, but this need not be the case.
-- `cause`: The cause of the error, which is one of:
-	- `"ENDPOINT_UNAVAILABLE"`: An observation error that indicates that a data source endpoint is unavailable, i.e. that no TCP connection can be established.
-	- `"ENDPOINT_UNRESPONSIVE"`: An observation error that indicates that a data source endpoint is reachable, i.e. a TCP connection could be established, but fails to provide a (complete) HTTP response (after some timeout defined by the collector).
-	- `"MALFORMED_RESPONSE"`: An observation error that indicates that a data source endpoint is reachable, i.e. a TCP connection could be established, and responsive, i.e. it provided at least one byte worth of response, but the response cannot be parsed, because it is syntactically invalid.
-An error of this kind is detected if a HTTP response is malformed or if the JSON contained within the HTTP body is malformed. The `parameter` may contain a string that contains the invalid response that caused the error.
-	- `"EXTRANEOUS_RESPONSE"`: An observation error that indicates that a data source provided a valid JSON response, but that response contained some unexpected extraneous content. This may indicate that the data format has changed, in which case the expected data format has to be updated. The `parameter` of the event will be a string that contains the full (valid) JSON that caused this error.
-	- `"INTERNAL_ERROR"`: An observation error that indicates that some unexpected exceptional condition occurred. Errors of this kind may occur at any time. Errors need not be directly related to any communication to the data source or data consumer.
-- `parameter`: Additional information on the error depending on the cause or `null`  if no error detail is provided.
+- `validUntil`: Unused, always `0`. Added only to match the format expected by the analysis module.
+- `data`: A JSON object which contains exactly the following keys:
+	- `cause`: The cause of the error, which is one of:
+		- `"ENDPOINT_UNAVAILABLE"`: An observation error that indicates that a data source endpoint is unavailable, i.e. that no TCP connection can be established.
+		- `"ENDPOINT_UNRESPONSIVE"`: An observation error that indicates that a data source endpoint is reachable, i.e. a TCP connection could be established, but fails to provide a (complete) HTTP response (after some timeout defined by the collector).
+		- `"MALFORMED_RESPONSE"`: An observation error that indicates that a data source endpoint is reachable, i.e. a TCP connection could be established, and responsive, i.e. it provided at least one byte worth of response, but the response cannot be parsed, because it is syntactically invalid.
+	An error of this kind is detected if a HTTP response is malformed or if the JSON contained within the HTTP body is malformed. The `parameter` may contain a string that contains the invalid response that caused the error.
+		- `"EXTRANEOUS_RESPONSE"`: An observation error that indicates that a data source provided a valid JSON response, but that response contained some unexpected extraneous content. This may indicate that the data format has changed, in which case the expected data format has to be updated. The `parameter` of the event will be a string that contains the full (valid) JSON that caused this error.
+		- `"INTERNAL_ERROR"`: An observation error that indicates that some unexpected exceptional condition occurred. Errors of this kind may occur at any time. Errors need not be directly related to any communication to the data source or data consumer.
+	- `parameter`: Additional information on the error depending on the cause or `null`  if no error detail is provided.
 
 An event of type `error` never contains any keys except those listed above.
 
@@ -64,10 +66,13 @@ Example:
 
 	{
 		"kind": "error",
-		"observer": null
+		"observer": null,
 		"observedAt": 1609459200000,
-		"cause": "INTERNAL_ERROR",
-		"parameter": null
+		"validUntil": 0,
+		"data": {
+			"cause": "INTERNAL_ERROR",
+			"parameter": null
+		}
 	}
 
 ## Full example
@@ -136,14 +141,20 @@ A message created by the Forwarding and Collection module may look like the foll
 			"kind": "error",
 			"observer": "radar",
 			"observedAt": 1609459200000,
-			"cause": "MALFORMED_RESPONSE",
-			"parameter": "[{\"text\":\"This is not a valid JSON structure, because there is no closing bracked for the following object\"}, {]"
+			"validUntil": 0,
+			"data": {
+				"cause": "MALFORMED_RESPONSE",
+				"parameter": "[{\"text\":\"This is not a valid JSON structure, because there is no closing bracked for the following object\"}, {]"
+			}
 		},
 		{
 			"kind": "error",
 			"observer": null,
 			"observedAt": 1609459200000,
-			"cause": "INTERNAL_ERROR",
-			"parameter": null
+			"validUntil": 0,
+			"data": {
+				"cause": "INTERNAL_ERROR",
+				"parameter": null
+			}
 		}
 	]
