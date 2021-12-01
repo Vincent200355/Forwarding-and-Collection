@@ -17,7 +17,7 @@ def pushErrorData(ENDPOINT, observedAt, cause, parameter):
         """
         observer = ENDPOINT.name()
         data = {'cause' : cause, 'parameter' : parameter}
-        pload = {'kind' : 'error', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : None,'data' : data}
+        pload = [{'kind' : 'error', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : None, 'data' : data}]
         r = requests.post(url, data = pload)
 
 def pushValidData(ENDPOINT, jsonObject, observedAt):
@@ -28,13 +28,16 @@ def pushValidData(ENDPOINT, jsonObject, observedAt):
         Arguments:
             ENDPOINT -- Instance of Endpoint class that contains the endpoint name and the endpoint pollingInterval
             observedAt -- datetime that indicates when the error probably occured
-            jsonObject -- response from the observer
+            jsonObject -- list with responses
         """
         observer = ENDPOINT.name()
         interval = ENDPOINT.pollingInterval() 
         validUntil = observedAt + timedelta(seconds=interval)
-        pload = {'kind' : 'entry', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : validUntil, 'data' : jsonObject}
+        pload = []
+
+        for obj in jsonObject:
+            pload.append({'kind' : 'entry', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : validUntil, 'data' : obj})
+
         r = requests.post(url, data = pload)
 
-
-        
+       
