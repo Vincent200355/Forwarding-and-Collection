@@ -3,11 +3,6 @@ import connection as con
 from datetime import datetime, timedelta
 database = con.Connection()
 
-with open('test.json') as f:
-  lines = f.read()
-data = json.loads(lines)
-
-
 def handle_unique(endpoint, obj, record):
   '''
   this Methode defines the action, that
