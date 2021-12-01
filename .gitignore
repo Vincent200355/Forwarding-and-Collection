@@ -2,5 +2,5 @@
 /env/
 /test/
 /credentials.ini
-/src/credentials.py
+/credentials.py
 /**/__pycache__
