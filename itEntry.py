@@ -3,7 +3,6 @@ import re
 
 # pattern (as RegExp) for each field
 regExDict = {
-    "observer":     r"it",
     "name":         r"[a-zA-Z-]+",
     "unit":         r"(%)|(count)|(Mb/s)|(-)",
     "value":        r"[a-zA-Z0-9 <>]+"
@@ -37,8 +36,3 @@ def validateEntry(jsonObj):
                 invalidFields.append(entry["name"])
 
     return (len(invalidFields) == 0), invalidFields
-
-
-if __name__ == "__main__":
-    validity = validateEntry([{"observer": "it", "name":"server-cpu-usage","unit":"%","value":27},{"observer": "it","name":"server-ram-usage","unit":"%","value":21},{"observer": "it","name":"server-login-failed","unit":"count","value":91},{"observer": "it", "name":"server-login-success","unit":"count","value":1031},{"observer": "it", "name":"traffic-upload","unit":"Mb/s","value":41},{"observer": "it","name":"traffic-download","unit":"Mb/s","value":97},{"observer": "it","name":"news","unit":"-","value":"all systems running normal<br>"}])
-    print(validity)

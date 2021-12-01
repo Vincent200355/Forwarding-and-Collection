@@ -3,7 +3,6 @@ import re
 
 # pattern (as RegExp) for each field
 regExDict = {
-    "observer":     r"flightplan",
     "callsign":     r"[A-Z0-9]*",
     "ssr":          r"[A-Z][A-Z0-9]*",
     "rules":        r"[A-Z][A-Z0-9]*",
@@ -40,8 +39,3 @@ def validateEntry(jsonObj):
             invalidFields.append(item)
 
     return (len(invalidFields) == 0), invalidFields
-
-
-if __name__ == "__main__":
-    validity = validateEntry({"observer":"flightplan","callsign":"EWG8XZ","ssr":"A1411","rules":"IS","aircraft":"A320","wvc":"M","equipment":"S/S","origin":"LFPG","eobt":1637971200000,"route":"N0431F370 DH632","destination":"EDDH","eet":7200000,"eta":1637978400000,"status":"closed","registration":"DAAA","icao4444":"FPL-EWG8XZ/A1411-IS-A320/M-S/S-LFPG0000-N0431F370 DH632-EDDH0200-REG/DAAAA"})
-    print(validity)

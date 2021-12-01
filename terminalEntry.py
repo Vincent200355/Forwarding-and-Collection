@@ -3,7 +3,6 @@ import re
 
 # pattern (as RegExp) for each field
 regExDict = {
-    "observer":     r"terminal",
     "level":        r"[a-zA-Z]+",
     "message":      r"[a-zA-Z0-9 .+]*"
 }
@@ -27,8 +26,3 @@ def validateEntry(jsonObj):
             invalidFields.append(item)
 
     return (len(invalidFields) == 0), invalidFields
-
-
-if __name__ == "__main__":
-    validity = validateEntry({"observer":"terminal","level":"info","message":"The restaurant in Terminal 2 are now open"})
-    print(validity)

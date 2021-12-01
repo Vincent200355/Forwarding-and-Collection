@@ -3,7 +3,6 @@ import re
 
 # pattern (as RegExp) for each field
 regExDict = {
-    "observer":     r"radar",
     "callsign":     r"[A-Z0-9]*",
     "date":         r"[0-9]+",
     "lat":          r"[0-9][.0-9]+",
@@ -30,8 +29,3 @@ def validateEntry(jsonObj):
             invalidFields.append(item)
 
     return (len(invalidFields) == 0), invalidFields
-
-
-if __name__ == "__main__":
-    validity = validateEntry({"observer": "radar", "callsign": "EWG6UC","date": 1637755430782,"lat": 9.997445,"lon": 53.628698,"alt": 0})
-    print(validity)
