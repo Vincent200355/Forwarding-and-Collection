@@ -28,7 +28,7 @@ def handleError(observationFailureCause, parameter=None, endpoint=None, observed
 		observedAt - a datetime that indicates when the error occurred.
 		(default: datetime.now())
 	"""
-	print("An error occurred: " + str(observationFailureCause) + "(" + str(parameter) + ") " + (("for endpoint " + endpoint.name()) if endpoint != None else "for an unknown endpoint") " at " + str(observedAt))
+	print("An error occurred: " + str(observationFailureCause) + "(" + str(parameter) + ") " + (("for endpoint " + endpoint.name()) if endpoint != None else "for an unknown endpoint") + " at " + str(observedAt))
 	try:
 		forwardError(endpoint, observedAt, observationFailureCause, parameter)
 		# Any error must be passed to the database so it can be stored persistently
