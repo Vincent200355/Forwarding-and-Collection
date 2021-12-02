@@ -1,6 +1,7 @@
 from endpoints import Endpoint, ENDPOINTS
 from errorHandler import handleError
 from flightplanEntry import validateEntry as validateFlightplanEntry
+from forwarder import pushValidData as forwardEntries
 from itEntry import validateEntry as validateITEntry
 from json import loads as parseJSON
 from json.decoder import JSONDecodeError
@@ -63,5 +64,5 @@ def _verifyStructure(endpoint, jsonObj, observedAt):
 	print("Endpoint " + endpoint.name() + " delivered " + str(len(jsonObj)) + " " + ("entity" if len(jsonObj) == 1 else "entities"))
 	
 	unify(endpoint, observedAt, jsonObj)
-	# TODO pass to forwarder
+	forwardEntries(endpoint, jsonObj, observedAt)
 	
