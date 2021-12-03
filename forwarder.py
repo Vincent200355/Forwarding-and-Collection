@@ -26,12 +26,12 @@ def pushValidData(ENDPOINT, jsonObject, observedAt):
         to the master of the 'Analyse-Gruppe'
 
         Arguments:
-            ENDPOINT -- Instance of Endpoint class that contains the endpoint name and the endpoint pollingInterval
+            ENDPOINT -- Instance of Endpoint class that contains the endpoint name and the endpoint polling interval
             observedAt -- datetime that indicates when the error probably occured
             jsonObject -- list with responses
         """
         observer = ENDPOINT.name()
-        interval = ENDPOINT.pollingInterval() 
+        interval = ENDPOINT.interval() 
         validUntil = observedAt + timedelta(seconds=interval)
         pload = []
 
