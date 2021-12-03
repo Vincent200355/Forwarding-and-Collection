@@ -1,5 +1,6 @@
 from endpoints import Endpoint, ENDPOINTS
 from errorHandler import handleError
+from datetime import datetime
 from flightplanEntry import validateEntry as validateFlightplanEntry
 from forwarder import pushValidData as forwardEntries
 from itEntry import validateEntry as validateITEntry
@@ -35,7 +36,14 @@ def verifyAPIResponse(endpoint, response, observedAt):
 		handleError(MALFORMED_RESPONSE, parameter=response);
 		return;
 	
-	_verifyStructure(endpoint, jsonObj, observedAt)
+	try:
+		_verifyStructure(endpoint, jsonObj, observedAt)
+	except Exception as e:
+		e.verifierCtx = {
+			"Observation time": str(observedAt) + " (" + str(datetime.fromtimestamp(observedAt/1000.0)) + ")",
+			"Response JSON": response.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+		}
+		raise e
 
 def _verifyStructure(endpoint, jsonObj, observedAt):
 	
