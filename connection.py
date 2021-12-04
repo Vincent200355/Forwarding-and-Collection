@@ -1,5 +1,6 @@
 import mysql.connector
 import credentials as creds
+# import endpoints as endp
 
 '''
     Connect to database and execute custom requests
@@ -65,64 +66,69 @@ class Connection:
             return 'ObservationError'
         else:
             print("Endpoint is not implemented.")
+            return False
 
     '''
         Execute a SELECT query for observer with custom arguments.
         
         Keyword arguments:
-            - observer: String -- flightplan || radar || terminal || it || observer || error
+            - observer: Endpoint
             - arguments: Dictionary -- dictionary with arguments for WHERE-Clause. {key1: value1, key2: value2} => WHERE key1 = value1 AND key2 = value2
         Return value:
             - Boolean || List -- True -> Found matching record || List -> list of id's with matching data
     '''
     def read(self, observer, arguments):
-        query = 'SELECT * FROM ' + self.table(observer) + " WHERE " + ' AND '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + ";"
-        result = self.execute(query, arguments).fetchall() 
-        if(result == []):
-            return False
-        else: 
-            id = []
-            for item in result:
-                id.append(item[0])
-            return id
+        if(self.table(observer.name())):
+            query = 'SELECT * FROM ' + self.table(observer.name()) + " WHERE " + ' AND '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + ";"
+            result = self.execute(query, arguments).fetchall() 
+            if(result == []):
+                return False
+            else: 
+                id = []
+                for item in result:
+                    id.append(item[0])
+                return id
                 
 
     '''
         Execute a INSERT query for observer with custom arguments.
         
         Keyword arguments:
-            - observer: String -- flightplan || radar || terminal || it || observer || error
+            - observer: Endpoint
             - arguments: Dictionary -- dictionary with arguments for INSERT {key1: value1, key2: value2} => INSERT INTO OBSERVER (key1, key2) VALUES(value1, value2)
     '''
     def write(self, observer, arguments):
-        query = 'INSERT INTO ' + self.table(observer) + "(" + ', '.join(map(str, arguments.keys())) + ") " + 'VALUES (%(' + ')s, %('.join(map(str, arguments.keys())) + ")s );"
-        result = self.execute(query, arguments)
-        self.connection.commit()
-        return result
+        observerDatabase = observer if isinstance(observer, str) else observer.name()
+        if(self.table(observerDatabase)):
+            query = 'INSERT INTO ' + self.table(observerDatabase) + "(" + ', '.join(map(str, arguments.keys())) + ") " + 'VALUES (%(' + ')s, %('.join(map(str, arguments.keys())) + ")s );"
+            result = self.execute(query, arguments)
+            self.connection.commit()
+            return result
     
     '''
         Execute a UPDATE query in ObservationEntry.
         
         Keyword arguments:
-            - observer: String -- flightplan || radar || terminal || it || observer || error
+            - observer: Endpoint
             - arguments: Dictionary -- dictionary with arguments for UPDATE {key1: value1, key2: value2} => SET key1 = value1, key2 = value2
             - id: Integer -- id of record that should be updated
     '''
     def update(self, observer, arguments, id):
-        query = 'UPDATE ' + self.table("observer") + ' SET ' + ', '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + " WHERE id = " + str(id) + " AND observer = '" + observer + "';"
-        self.execute(query, arguments)
-        self.connection.commit()
+        if(self.table(observer.name())):
+            query = 'UPDATE ' + self.table("observer") + ' SET ' + ', '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + " WHERE id = " + str(id) + " AND observer = '" + observer.databaseName() + "';"
+            self.execute(query, arguments)
+            self.connection.commit()
 
     '''
         Execute two INSERT queries: Create a ObservationEntry and add observer-record.
         
         Keyword arguments:
-            - observer: String -- flightplan || radar || terminal || it || observer || error
+            - observer: Endpoint
             - arguments: Dictionary -- dictionary with arguments for INSERT INTO flightplan/radar/terminal/it
             - observationEntry: Dictionary -- dictionary with arguments for INSERT INTO OBSERVER
     '''
     def writeRecord(self, observer, arguments, observationEntry):
-        cursor = self.write("observer", {**observationEntry, **{"observer": observer}})
+        cursor = self.write("observer", {**observationEntry, **{"observer": observer.databaseName()}})
         self.write(observer, {**arguments, **{"id": cursor.lastrowid}})
 
 
@@ -169,15 +175,16 @@ class Connection:
 #     "outdated": 1,
 #     "reported": 0
 # }
+# obs = endp.ENDPOINTS["flightplans"]
 
 # # INSERT a record for observer FLIGHTPLAN
-# database.writeRecord("FLIGHTPLAN", record, obRecord)
+# database.writeRecord(obs, record, obRecord)
 
 # # UPDATE ObservationEntry with observer = FLIGHTPLAN AND id = 13
-# database.update("FLIGHTPLAN", obRecordUpdate, 13)
+# database.update(obs, obRecordUpdate, 13)
 
 # # Search for record in FLIGHTPLAN table
-# print(database.read("FLIGHTPLAN", record))
+# print(database.read(obs, record))
 
 # # Close database connection
 # database.close()

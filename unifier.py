@@ -44,14 +44,14 @@ def unify(endpoint, observedAt, jsonObj):
   is called
   '''
   for obj in jsonObj:
-    res = database.read(endpoint.name(), obj)
+    res = database.read(endpoint, obj)
     record = create_ob_record(observedAt, endpoint)
     if res == False:      
-      handle_unique(endpoint.name(), obj, record)
+      handle_unique(endpoint, obj, record)
     else:
       try:
         for id in res:
-          handle_duplicate(endpoint.name(), record, id)
+          handle_duplicate(endpoint, record, id)
       except Exception as e:
         print(e)
         print(type(e))
