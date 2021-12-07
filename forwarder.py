@@ -31,13 +31,8 @@ def pushValidData(ENDPOINT, jsonObject, observedAt):
             jsonObject -- list with responses
         """
         observer = ENDPOINT.name()
-        interval = ENDPOINT.interval() 
-        validUntil = observedAt + timedelta(seconds=interval)
-        pload = []
+        validUntil = observedAt + ENDPOINT.interval() 
 
         for obj in jsonObject:
-            pload.append({'kind' : 'entry', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : validUntil, 'data' : obj})
-
-        r = requests.post(url, data = pload)
-
-       
+            requests.post(url, json = {'kind' : 'entry', 'observer' : observer, 'observedAt' : observedAt, 'validUntil' : validUntil, 'data' : obj})
+        
