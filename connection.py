@@ -1,6 +1,6 @@
 import mysql.connector
 import credentials as creds
-# import endpoints as endp
+import endpoints as endp
 
 '''
     Connect to database and execute custom requests
@@ -82,7 +82,7 @@ class Connection:
         if(self.table(observer.name())):
             query = 'SELECT * FROM ' + self.table(observer.name()) + " WHERE " + ' AND '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + ";"
             result = self.execute(query, arguments)
-            if(result==False or result == []):
+            if(result==False or result.fetchall() == []):
                 return False
             else: 
                 id = []
@@ -189,3 +189,24 @@ class Connection:
 
 # # Close database connection
 # database.close()
+
+database = Connection()
+record = {
+    "callsign":"dfdfdf",
+    "ssr":"A1411",
+    "rules":"IS",
+    "wvc":"M",
+    "equipment":"S/S",
+    "origin":"LFPG",
+    "aircraft": "A320",
+    "eobt":1638144000000,
+    "route":"N0431F370 DH632",
+    "destination":"EDDH",
+    "eet":7200000,
+    "eta":1638371266444,
+    "status":"closed",
+    "registration":"DAAA",
+    "icao4444":"FPL-EWG8XZ/A1411-IS-A320/M-S/S-LFPG0000-N0431F370 DH632-EDDH0200-REG/DAAAA"
+}
+obs = endp.ENDPOINTS["flightplans"]
+print(database.read(obs, record))
