@@ -1,6 +1,6 @@
 import mysql.connector
 import credentials as creds
-import endpoints as endp
+# import endpoints as endp
 
 '''
     Connect to database and execute custom requests
@@ -19,6 +19,7 @@ class Connection:
         except Exception as err:
             print ("Oops! An exception has occured:", err)
             print ("Exception TYPE:", type(err))
+                            
         
     '''
         Close the database connection.
@@ -27,6 +28,7 @@ class Connection:
     '''
     def close(self):
         self.connection.close()
+        
 
     '''
         Execute a query with custom arguments.
@@ -40,11 +42,17 @@ class Connection:
             cursor = self.connection.cursor(buffered=True)
             cursor.execute( query, arguments )
             result = cursor
+            cursor.close()
             return result
         except Exception as err:
             print ("Oops! An exception has occured:", err)
             print ("Exception TYPE:", type(err))
-            return False
+            if (str(type(err)) == "<class 'mysql.connector.errors.OperationalError'>"):
+                print("Reconnecting to database ...")
+                self.connection = mysql.connector.connect(user=creds.MYSQL_USER, password=creds.MYSQL_PASSWORD, host=creds.MYSQL_HOST, database=creds.MYSQL_DATABASE, port=creds.MYSQL_PORT)
+                self.execute(query, arguments)
+            else:    
+                return False
 
     '''
         Get table name corresponding to observer-keyword
@@ -189,24 +197,3 @@ class Connection:
 
 # # Close database connection
 # database.close()
-
-database = Connection()
-record = {
-    "callsign":"dfdfdf",
-    "ssr":"A1411",
-    "rules":"IS",
-    "wvc":"M",
-    "equipment":"S/S",
-    "origin":"LFPG",
-    "aircraft": "A320",
-    "eobt":1638144000000,
-    "route":"N0431F370 DH632",
-    "destination":"EDDH",
-    "eet":7200000,
-    "eta":1638371266444,
-    "status":"closed",
-    "registration":"DAAA",
-    "icao4444":"FPL-EWG8XZ/A1411-IS-A320/M-S/S-LFPG0000-N0431F370 DH632-EDDH0200-REG/DAAAA"
-}
-obs = endp.ENDPOINTS["flightplans"]
-print(database.read(obs, record))
