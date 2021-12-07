@@ -90,7 +90,7 @@ class Connection:
         if(self.table(observer.name())):
             query = 'SELECT * FROM ' + self.table(observer.name()) + " WHERE " + ' AND '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + ";"
             result = self.execute(query, arguments)
-            if(result==False or result.fetchall() == []):
+            if(result==False or not result or result.fetchall() == []):
                 return False
             else: 
                 id = []
