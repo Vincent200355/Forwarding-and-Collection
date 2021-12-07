@@ -67,8 +67,8 @@ def api_request(data, auth):
 #  --> FORMAT: [interval, service name, URL]
 data = [[ 10, 'it', 'http://asm.fl.dlr.de:10001/it'],
         [ 20, 'radar', 'http://asm.fl.dlr.de:10001/radar'],
-        [ 30, 'flightplans', 'http://asm.fl.dlr.de:10001/flightplans'],
-        [ 15, 'terminal', 'http://asm.fl.dlr.de:10001/terminal']]
+        [ 30, 'flightplans', 'http://asm.fl.dlr.de:10001/flightplans']]
+        #[ 15, 'terminal', 'http://asm.fl.dlr.de:10001/terminal']
 
 
 # authentication data
@@ -77,6 +77,6 @@ config = configparser.RawConfigParser()
 config.read('credentials.ini')
 auth = [config.get('CollectorApi', 'user'), config.get('CollectorApi', 'pass')]
 
-for i in range(4):
+for i in range(3):
     threading.Timer( 0,thread_run,[data[i],auth]).start()
             

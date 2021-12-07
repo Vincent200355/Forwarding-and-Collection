@@ -132,6 +132,6 @@ def registerEndpoint(name, interval, databaseTypeName):
 
 # Register default endpoints
 registerEndpoint("flightplans", 30000, "FLIGHTPLAN")
-registerEndpoint("terminal", 15000, "TERMINAL")
+#registerEndpoint("terminal", 15000, "TERMINAL")
 registerEndpoint("radar", 20000, "RADAR")
 registerEndpoint("it", 10000, "IT")
