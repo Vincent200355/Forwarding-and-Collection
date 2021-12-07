@@ -44,6 +44,7 @@ class Connection:
         except Exception as err:
             print ("Oops! An exception has occured:", err)
             print ("Exception TYPE:", type(err))
+            return False
 
     '''
         Get table name corresponding to observer-keyword
@@ -80,12 +81,12 @@ class Connection:
     def read(self, observer, arguments):
         if(self.table(observer.name())):
             query = 'SELECT * FROM ' + self.table(observer.name()) + " WHERE " + ' AND '.join([k + "=" + "%(" + k + ")s" for k in arguments.keys()]) + ";"
-            result = self.execute(query, arguments).fetchall() 
-            if(result == []):
+            result = self.execute(query, arguments)
+            if(result==False or result == []):
                 return False
             else: 
                 id = []
-                for item in result:
+                for item in result.fetchall():
                     id.append(item[0])
                 return id
                 
